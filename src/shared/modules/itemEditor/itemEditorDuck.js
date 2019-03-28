@@ -3,7 +3,8 @@ import * as _ from 'lodash'
 
 const initialState = {
   selectedItem: undefined,
-  neo4jItem: undefined
+  neo4jItem: undefined,
+  propertiesEdited: true
 }
 
 // Action type constants
@@ -12,6 +13,7 @@ export const SET_SELECTED_ITEM = `${NAME}/SET_SELECTED_ITEM`
 export const EDIT_SELECTED_ITEM = `${NAME}/EDIT_SELECTED_ITEM`
 export const FETCH_DATA = `${NAME}/FETCH_DATA`
 export const SET_NEO4J_ITEM = `${NAME}/SET_NEO4J_ITEM`
+export const PROPERTIES_EDITED = `${NAME}/PROPERTIES_EDITED`
 
 // Actions
 
@@ -19,6 +21,13 @@ export const setSelectedItem = item => {
   return {
     type: SET_SELECTED_ITEM,
     item
+  }
+}
+
+export const checkpropertiesEdited = propertiesEdited => {
+  return {
+    type: PROPERTIES_EDITED,
+    propertiesEdited
   }
 }
 
@@ -54,6 +63,12 @@ export default function reducer (state = initialState, action) {
 
     case SET_NEO4J_ITEM:
       return { ...state, neo4jItem: action.item }
+
+    case PROPERTIES_EDITED:
+      let validstate = _.cloneDeep(state)
+      validstate.propertiesEdited = false
+      console.log(validstate.propertiesEdited)
+      return validstate
 
     default:
       return state

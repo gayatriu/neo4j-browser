@@ -15,7 +15,6 @@ export class EditorInfo extends Component {
     super(props)
     this.state = {
       disabled: true,
-      validator: true, // edit not happened / property not changed
       item: props.itemEditor.neo4jItem
         ? _.cloneDeep(props.itemEditor.neo4jItem)
         : undefined
@@ -29,20 +28,23 @@ export class EditorInfo extends Component {
   setEditSelectedItem = () => {
     this.props.setEditSelectedItem(this.state.item)
   }
+  checkpropertiesEdited = () => {
+    this.props.checkpropertiesEdited()
+  }
 
   // setvalidator= () => {
   //   this.props.setvalidator(this.state.validator)
   // }
 
-  checkChangesSave = e => {
-    if (!this.state.validator) {
-      if (confirm('Please Save your changes!')) {
-        alert('if')
-      } else {
-        console.log('I m in else')
-      }
-    }
-  }
+  // checkChangesSave = e => {
+  //   if (!this.state.validator) {
+  //     if (confirm('Please Save your changes!')) {
+  //       alert('if')
+  //     } else {
+  //       console.log('I m in else')
+  //     }
+  //   }
+  // }
 
   /**
    *
@@ -52,13 +54,12 @@ export class EditorInfo extends Component {
     // const nodeChanged =
     //   nextProps.itemEditor.selectedItem.item.id !==
     //   this.props.itemEditor.selectedItem.item.id;
-    if (!this.state.validator) {
-      alert('save first')
-    }
+    // if (!this.state.validator) {
+    //   alert('save first')
+    // }
     this.setState({
       item: _.cloneDeep(nextProps.itemEditor.neo4jItem),
-      disabled: true,
-      validator: true
+      disabled: true
     })
   }
 
@@ -75,14 +76,11 @@ export class EditorInfo extends Component {
    */
 
   setParentItemState = newProperties => {
-    this.setState({
-      validator: false
-    })
     let newstate = _.cloneDeep(this.state)
     console.log(newstate)
 
     Object.keys(newstate).forEach(function (k) {
-      if (newstate[k]) {
+      if (newstate[k] && newstate[k]._fields && newstate[k]._fields.length) {
         newstate[k]._fields[0] = newProperties
       }
     })
@@ -109,6 +107,7 @@ export class EditorInfo extends Component {
             item={this.state}
             handleEdit={this.handleEdit}
             setEditSelectedItem={this.setEditSelectedItem}
+            checkpropertiesEdited={this.checkpropertiesEdited}
             setParentItemState={this.setParentItemState}
             checkChangesSave={this.checkChangesSave}
             setvalidator={this.props.setvalidator}
@@ -132,11 +131,8 @@ const mapDispatchToProps = dispatch => {
     setEditSelectedItem: item => {
       dispatch(itemEditorActions.setEditSelectedItem(item))
     },
-    setvalidator: validator => {
-      dispatch(itemEditorActions.setvalidator(validator))
-    },
-    checknodeswitching: switchNode => {
-      dispatch(itemEditorActions.checknodeswitching(switchNode))
+    checkpropertiesEdited: item => {
+      dispatch(itemEditorActions.checkpropertiesEdited(item))
     }
   }
 }
